@@ -113,6 +113,12 @@ const images = [
 export default function Gallery() {
   const [selectedImage, setSelectedImage] = useState<null | typeof images[0]>(null);
 
+  const [loadedImages, setLoadedImages] = useState<{ [key: number]: boolean }>({});
+
+  const handleImageLoad = (index: number) => {
+    setLoadedImages(prev => ({ ...prev, [index]: true }));
+  };
+
   return (
     <section id="galeria" className="py-24 bg-salon-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -147,27 +153,38 @@ export default function Gallery() {
               onClick={() => setSelectedImage(img)}
               className="relative group h-48 sm:h-64 md:h-80 rounded-xl overflow-hidden cursor-pointer shadow-lg hover:shadow-salon-pink/20 transition-all bg-white/5"
             >
+              <AnimatePresence>
+                {!loadedImages[index] && (
+                  <motion.div 
+                    initial={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute inset-0 bg-white/5 animate-pulse flex items-center justify-center z-10"
+                  >
+                    <div className="w-8 h-8 border-2 border-salon-pink/20 border-t-salon-pink rounded-full animate-spin"></div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               <motion.img
-                animate={{ y: [0, -5, 0] }}
+                animate={{ 
+                  y: [0, -5, 0],
+                  opacity: loadedImages[index] ? 1 : 0 
+                }}
                 transition={{ 
                   duration: 6, 
                   repeat: Infinity, 
                   ease: "easeInOut",
                   delay: index * 0.2
                 }}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
                 src={img.url}
                 alt={img.title}
                 className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                 referrerPolicy="no-referrer"
                 loading="lazy"
                 decoding="async"
-                onLoad={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.opacity = '1';
-                }}
-                style={{ opacity: 0, transition: 'opacity 1s ease-in-out' }}
+                onLoad={() => handleImageLoad(index)}
+                initial={{ opacity: 0 }}
+                style={{ transition: 'opacity 0.5s ease-in-out' }}
               />
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-center">
                 <span className="text-salon-gold text-[8px] md:text-[10px] font-bold tracking-[0.3em] uppercase mb-1">

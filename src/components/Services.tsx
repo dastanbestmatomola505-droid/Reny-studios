@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import React, { useState, useRef } from 'react';
 
 const services = [
   {
@@ -39,20 +40,102 @@ const services = [
   },
 ];
 
-export default function Services() {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
+interface ServiceItemProps {
+  service: {
+    title: string;
+    description: string;
+    price: string;
+    image: string;
   };
+  index: number;
+  loadedImages: { [key: string]: boolean };
+  handleImageLoad: (title: string) => void;
+}
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+const ServiceItem: React.FC<ServiceItemProps> = ({ service, index, loadedImages, handleImageLoad }) => {
+  const itemRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: itemRef,
+    offset: ["start end", "end start"]
+  });
+
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.2, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
+
+  return (
+    <motion.div
+      ref={itemRef}
+      style={{ opacity }}
+      className="bg-salon-card border border-white/5 group hover:border-salon-gold/50 transition-all duration-500 rounded-[2.5rem] overflow-hidden flex flex-col shadow-2xl"
+    >
+      <div className="relative h-72 sm:h-64 overflow-hidden">
+        <AnimatePresence>
+          {!loadedImages[service.title] && (
+            <motion.div 
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-white/5 animate-pulse flex items-center justify-center z-10"
+            >
+              <div className="w-8 h-8 border-2 border-salon-pink/20 border-t-salon-pink rounded-full animate-spin"></div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        <motion.img
+          style={{ scale }}
+          src={service.image}
+          alt={service.title}
+          className="w-full h-full object-cover"
+          referrerPolicy="no-referrer"
+          loading="lazy"
+          decoding="async"
+          onLoad={() => handleImageLoad(service.title)}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: loadedImages[service.title] ? 1 : 0 }}
+          transition={{ opacity: { duration: 0.5 } }}
+        />
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+           <a 
+            href="#galeria"
+            className="bg-salon-pink text-white px-6 py-2 text-xs font-bold tracking-widest rounded-full transform translate-y-4 group-hover:translate-y-0 transition-transform"
+           >
+            VER NA GALERIA
+           </a>
+        </div>
+      </div>
+      
+      <div className="p-6 flex flex-col flex-grow items-center text-center">
+        <h3 className="text-xl font-playfair font-bold mb-3 tracking-wide">{service.title}</h3>
+        <p className="text-gray-400 text-sm mb-6 flex-grow">{service.description}</p>
+        <div className="flex flex-col items-center">
+          <span className="text-gray-500 text-[10px] uppercase tracking-widest mb-1">A partir de</span>
+          <span className="text-xl font-bold text-salon-gold mb-4">{service.price}</span>
+          <motion.a 
+            whileHover={{ scale: 1.05, backgroundColor: '#EC4899', color: 'white' }}
+            whileTap={{ scale: 0.95 }}
+            animate={{ 
+              boxShadow: ["0px 0px 0px rgba(236, 72, 153, 0)", "0px 0px 15px rgba(236, 72, 153, 0.4)", "0px 0px 0px rgba(236, 72, 153, 0)"]
+            }}
+            transition={{ 
+              boxShadow: { duration: 2, repeat: Infinity }
+            }}
+            href={`https://wa.me/258867858176?text=${encodeURIComponent(`Olá Reny Studios! 👋 Fiquei encantada com os vossos trabalhos e gostaria de agendar um serviço de *${service.title}* para realçar a minha beleza. Quais são os horários disponíveis?`)}`}
+            target="_blank"
+            className="bg-salon-pink/10 border border-salon-pink text-salon-pink px-8 py-2.5 rounded-sm text-xs font-bold tracking-widest transition-all w-full text-center block shadow-lg"
+          >
+            AGENDAR AGORA
+          </motion.a>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+export default function Services() {
+  const [loadedImages, setLoadedImages] = useState<{ [key: string]: boolean }>({});
+
+  const handleImageLoad = (title: string) => {
+    setLoadedImages(prev => ({ ...prev, [title]: true }));
   };
 
   return (
@@ -68,77 +151,23 @@ export default function Services() {
               NOSSOS <span className="text-salon-pink">SERVIÇOS</span>
             </h2>
             <div className="w-24 h-1 bg-salon-gold mx-auto mb-6"></div>
-            <p className="text-gray-400 max-w-2xl mx-auto">
-              Descubra a nossa gama de serviços premium projetados para realçar a sua beleza natural e proporcionar momentos de puro relaxamento.
+            <p className="text-gray-400 max-w-2xl mx-auto italic">
+              "Excelência em cada detalhe, beleza em cada traço."
             </p>
           </motion.div>
         </div>
 
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service, index) => (
-            <motion.div
-              key={service.title}
-              variants={itemVariants}
-              className="bg-salon-card border border-white/5 group hover:border-salon-gold/50 transition-all duration-500 rounded-[2.5rem] overflow-hidden flex flex-col shadow-2xl"
-            >
-              <div className="relative h-64 overflow-hidden">
-                <motion.img
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ 
-                    duration: 4, 
-                    repeat: Infinity, 
-                    ease: "easeInOut",
-                    delay: index * 0.5 
-                  }}
-                  src={service.image}
-                  alt={service.title}
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                  referrerPolicy="no-referrer"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                   <a 
-                    href="#galeria"
-                    className="bg-salon-pink text-white px-6 py-2 text-xs font-bold tracking-widest rounded-full transform translate-y-4 group-hover:translate-y-0 transition-transform"
-                   >
-                    VER NA GALERIA
-                   </a>
-                </div>
-              </div>
-              
-              <div className="p-6 flex flex-col flex-grow items-center text-center">
-                <h3 className="text-xl font-playfair font-bold mb-3 tracking-wide">{service.title}</h3>
-                <p className="text-gray-400 text-sm mb-6 flex-grow">{service.description}</p>
-                <div className="flex flex-col items-center">
-                  <span className="text-gray-500 text-[10px] uppercase tracking-widest mb-1">A partir de</span>
-                  <span className="text-xl font-bold text-salon-gold mb-4">{service.price}</span>
-                  <motion.a 
-                    whileHover={{ scale: 1.05, backgroundColor: '#EC4899', color: 'white' }}
-                    whileTap={{ scale: 0.95 }}
-                    animate={{ 
-                      boxShadow: ["0px 0px 0px rgba(236, 72, 153, 0)", "0px 0px 15px rgba(236, 72, 153, 0.4)", "0px 0px 0px rgba(236, 72, 153, 0)"]
-                    }}
-                    transition={{ 
-                      boxShadow: { duration: 2, repeat: Infinity }
-                    }}
-                    href={`https://wa.me/258867858176?text=${encodeURIComponent(`Olá Reny Studios! 👋 Fiquei encantada com os vossos trabalhos e gostaria de agendar um serviço de *${service.title}* para realçar a minha beleza. Quais são os horários disponíveis?`)}`}
-                    target="_blank"
-                    className="bg-salon-pink/10 border border-salon-pink text-salon-pink px-8 py-2.5 rounded-sm text-xs font-bold tracking-widest transition-all w-full text-center block shadow-lg"
-                  >
-                    AGENDAR AGORA
-                  </motion.a>
-                </div>
-              </div>
-            </motion.div>
+            <ServiceItem 
+              key={service.title} 
+              service={service} 
+              index={index} 
+              loadedImages={loadedImages} 
+              handleImageLoad={handleImageLoad} 
+            />
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

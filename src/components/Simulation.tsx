@@ -1,9 +1,20 @@
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Eye, Sparkles } from 'lucide-react';
+import { useRef, useState } from 'react';
 
 export default function Simulation() {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const containerRef = useRef(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  const scrollScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.2, 1]);
+
   return (
-    <section id="simulacao" className="py-24 bg-salon-dark relative overflow-hidden">
+    <section id="simulacao" className="py-24 bg-salon-dark relative overflow-hidden" ref={containerRef}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Image Pane - Simulation View */}
@@ -11,16 +22,34 @@ export default function Simulation() {
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="relative h-[600px] rounded-[3rem] overflow-hidden group shadow-3xl border border-white/10"
+            className="relative h-[400px] md:h-[600px] rounded-[3rem] overflow-hidden group shadow-3xl border border-white/10"
           >
-            <img 
-              src="https://i.im.ge/eGsJ68/486181522_1184712499870875_6587990917239296048_n.jpg"
-              alt="Simulação Maquiagem Noiva"
-              className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000"
-              referrerPolicy="no-referrer"
-              loading="lazy"
-              decoding="async"
-            />
+            {!isLoaded && (
+              <div className="absolute inset-0 bg-white/5 animate-pulse flex items-center justify-center z-10">
+                <div className="w-12 h-12 border-4 border-salon-pink/20 border-t-salon-pink rounded-full animate-spin"></div>
+              </div>
+            )}
+            
+            <motion.div
+              style={{ scale: scrollScale }}
+              animate={{ y: [0, -15, 0] }}
+              transition={{ 
+                y: { duration: 6, repeat: Infinity, ease: "easeInOut" }
+              }}
+              className="w-full h-full"
+            >
+              <img 
+                src="https://i.im.ge/eGsJ68/486181522_1184712499870875_6587990917239296048_n.jpg"
+                alt="Simulação Maquiagem Noiva"
+                className="w-full h-full object-cover object-[center_30%] transform group-hover:scale-110 transition-transform duration-700"
+                referrerPolicy="no-referrer"
+                loading="lazy"
+                decoding="async"
+                onLoad={() => setIsLoaded(true)}
+                style={{ opacity: isLoaded ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}
+              />
+            </motion.div>
+            
             {/* Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-salon-dark via-transparent to-transparent opacity-60"></div>
             

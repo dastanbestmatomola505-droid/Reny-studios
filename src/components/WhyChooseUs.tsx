@@ -1,7 +1,17 @@
-import { motion } from 'framer-motion';
-import React, { useState } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import React, { useState, useRef } from 'react';
 
 export default function WhyChooseUs() {
+  const containerRef = useRef(null);
+  const [isSimulationLoaded, setIsSimulationLoaded] = useState(false);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  const scrollScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.25, 1]);
+
   const [formData, setFormData] = useState({
     nome: '',
     numero: '',
@@ -32,8 +42,8 @@ Gostaria de confirmar a disponibilidade para esta semana. Como podemos agendar?`
   };
 
   return (
-    <section id="agendamento" className="py-24 bg-salon-dark relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-1/3 h-full bg-salon-gold/5 -skew-x-12 transform origin-top pointer-events-none"></div>
+    <section id="agendamento" className="py-24 bg-salon-dark relative overflow-hidden" ref={containerRef}>
+      <div className="hidden md:block absolute top-0 right-0 w-1/3 h-full bg-salon-gold/5 -skew-x-12 transform origin-top pointer-events-none"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -101,8 +111,8 @@ Gostaria de confirmar a disponibilidade para esta semana. Como podemos agendar?`
               }}
               className="relative z-10"
             >
-              <div className="absolute inset-0 border-2 border-salon-gold/20 transform translate-x-4 translate-y-4 rounded-[3rem] pointer-events-none"></div>
-              <div className="bg-salon-card p-8 md:p-12 rounded-[3rem] border border-white/10 relative shadow-3xl overflow-hidden">
+              <div className="absolute inset-0 border-2 border-salon-gold/10 md:border-salon-gold/20 transform translate-x-2 translate-y-2 md:translate-x-4 md:translate-y-4 rounded-[2rem] md:rounded-[3rem] pointer-events-none"></div>
+              <div className="bg-salon-card p-6 md:p-12 rounded-[2rem] md:rounded-[3rem] border border-white/10 relative shadow-3xl overflow-hidden">
                 {/* Simulation Image Background Accent */}
                 <div className="absolute top-0 right-0 w-32 h-32 opacity-10 pointer-events-none">
                   <img 
@@ -135,22 +145,34 @@ Gostaria de confirmar a disponibilidade para esta semana. Como podemos agendar?`
                   {/* Simulation Visualization */}
                   <div className="flex flex-col gap-4 mb-4 md:mb-0">
                     <div className="relative h-48 md:h-full rounded-lg overflow-hidden border border-white/5">
-                      <motion.img 
-                        animate={{ 
-                          scale: [1.1, 1.3, 1.1],
-                          y: [0, -10, 0]
-                        }}
-                        transition={{ 
-                          duration: 10, 
-                          repeat: Infinity, 
-                          ease: "easeInOut"
-                        }}
-                        src="https://i.im.ge/eGsJ68/486181522_1184712499870875_6587990917239296048_n.jpg" 
-                        alt="Simulação Visual" 
-                        className="w-full h-full object-cover object-[center_30%]"
-                        loading="lazy"
-                        decoding="async"
-                      />
+                      {!isSimulationLoaded && (
+                        <div className="absolute inset-0 bg-white/5 animate-pulse flex items-center justify-center z-10">
+                          <div className="w-8 h-8 border-2 border-salon-pink/20 border-t-salon-pink rounded-full animate-spin"></div>
+                        </div>
+                      )}
+                      
+                      <motion.div
+                        style={{ scale: scrollScale }}
+                        className="w-full h-full"
+                      >
+                        <motion.img 
+                          animate={{ 
+                            y: [0, -10, 0]
+                          }}
+                          transition={{ 
+                            duration: 10, 
+                            repeat: Infinity, 
+                            ease: "easeInOut"
+                          }}
+                          src="https://i.im.ge/eGsJ68/486181522_1184712499870875_6587990917239296048_n.jpg" 
+                          alt="Simulação Visual" 
+                          className="w-full h-full object-cover object-[center_30%]"
+                          loading="lazy"
+                          decoding="async"
+                          onLoad={() => setIsSimulationLoaded(true)}
+                          style={{ opacity: isSimulationLoaded ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}
+                        />
+                      </motion.div>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
                         <span className="text-[10px] font-bold text-salon-gold uppercase tracking-[0.2em]">Visualização Premium</span>
                       </div>
@@ -158,46 +180,66 @@ Gostaria de confirmar a disponibilidade para esta semana. Como podemos agendar?`
                   </div>
 
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                    >
                       <label className="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Seu Nome</label>
-                      <input 
+                      <motion.input 
+                        whileFocus={{ scale: 1.01 }}
                         type="text" 
                         required
                         placeholder="Ex: Reny"
-                        className="w-full bg-black/40 border border-white/10 rounded-sm px-4 py-2.5 text-xs focus:border-salon-pink outline-none transition-colors text-white placeholder:text-gray-700"
+                        className="w-full bg-black/40 border border-white/10 rounded-sm px-4 py-2.5 text-xs focus:border-salon-pink outline-none transition-all text-white placeholder:text-gray-700 shadow-inner"
                         value={formData.nome}
                         onChange={(e) => setFormData({...formData, nome: e.target.value})}
                       />
-                    </div>
+                    </motion.div>
                     
-                    <div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                    >
                       <label className="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Telefone</label>
-                      <input 
+                      <motion.input 
+                        whileFocus={{ scale: 1.01 }}
                         type="tel" 
                         required
                         placeholder="+258..."
-                        className="w-full bg-black/40 border border-white/10 rounded-sm px-4 py-2.5 text-xs focus:border-salon-pink outline-none transition-colors text-white placeholder:text-gray-700"
+                        className="w-full bg-black/40 border border-white/10 rounded-sm px-4 py-2.5 text-xs focus:border-salon-pink outline-none transition-all text-white placeholder:text-gray-700 shadow-inner"
                         value={formData.numero}
                         onChange={(e) => setFormData({...formData, numero: e.target.value})}
                       />
-                    </div>
+                    </motion.div>
 
-                    <div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
                       <label className="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Localidade</label>
-                      <input 
+                      <motion.input 
+                        whileFocus={{ scale: 1.01 }}
                         type="text" 
                         required
                         placeholder="Ex: Matola"
-                        className="w-full bg-black/40 border border-white/10 rounded-sm px-4 py-2.5 text-xs focus:border-salon-pink outline-none transition-colors text-white placeholder:text-gray-700"
+                        className="w-full bg-black/40 border border-white/10 rounded-sm px-4 py-2.5 text-xs focus:border-salon-pink outline-none transition-all text-white placeholder:text-gray-700 shadow-inner"
                         value={formData.local}
                         onChange={(e) => setFormData({...formData, local: e.target.value})}
                       />
-                    </div>
+                    </motion.div>
 
-                    <div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                    >
                       <label className="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Serviço</label>
-                      <select 
-                        className="w-full bg-black/40 border border-white/10 rounded-sm px-4 py-2.5 text-xs focus:border-salon-pink outline-none transition-colors text-white appearance-none cursor-pointer"
+                      <motion.select 
+                        whileFocus={{ scale: 1.01 }}
+                        className="w-full bg-black/40 border border-white/10 rounded-sm px-4 py-2.5 text-xs focus:border-salon-pink outline-none transition-all text-white appearance-none cursor-pointer shadow-inner"
                         value={formData.servico}
                         onChange={(e) => setFormData({...formData, servico: e.target.value})}
                       >
@@ -207,8 +249,8 @@ Gostaria de confirmar a disponibilidade para esta semana. Como podemos agendar?`
                         <option className="bg-salon-card" value="Sobrancelhas & Pestanas">Sobrancelhas & Pestanas</option>
                         <option className="bg-salon-card" value="Maquiagem (Makeup)">Maquiagem (Makeup)</option>
                         <option className="bg-salon-card" value="Simulação de Visual">Simulação de Visual</option>
-                      </select>
-                    </div>
+                      </motion.select>
+                    </motion.div>
                     
                     <motion.button 
                       animate={{ y: [0, -3, 0] }}
