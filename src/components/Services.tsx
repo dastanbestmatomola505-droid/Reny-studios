@@ -48,18 +48,16 @@ interface ServiceItemProps {
     image: string;
   };
   index: number;
-  loadedImages: { [key: string]: boolean };
-  handleImageLoad: (title: string) => void;
 }
 
-const ServiceItem: React.FC<ServiceItemProps> = ({ service, index, loadedImages, handleImageLoad }) => {
+const ServiceItem: React.FC<ServiceItemProps> = ({ service, index }) => {
   const itemRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: itemRef,
     offset: ["start end", "end start"]
   });
 
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.2, 1]);
+  const scrollScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.1, 1]);
   const opacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
 
   return (
@@ -69,30 +67,14 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ service, index, loadedImages,
       className="bg-salon-card border border-white/5 group hover:border-salon-gold/50 transition-all duration-500 rounded-[2.5rem] overflow-hidden flex flex-col shadow-2xl"
     >
       <div className="relative h-72 sm:h-64 overflow-hidden">
-        <AnimatePresence>
-          {!loadedImages[service.title] && (
-            <motion.div 
-              initial={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-white/5 animate-pulse flex items-center justify-center z-10"
-            >
-              <div className="w-8 h-8 border-2 border-salon-pink/20 border-t-salon-pink rounded-full animate-spin"></div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-        
         <motion.img
-          style={{ scale }}
+          style={{ scale: scrollScale }}
           src={service.image}
           alt={service.title}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transform group-hover:scale-125 transition-transform duration-700"
           referrerPolicy="no-referrer"
           loading="lazy"
           decoding="async"
-          onLoad={() => handleImageLoad(service.title)}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: loadedImages[service.title] ? 1 : 0 }}
-          transition={{ opacity: { duration: 0.5 } }}
         />
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
            <a 
@@ -132,12 +114,6 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ service, index, loadedImages,
 };
 
 export default function Services() {
-  const [loadedImages, setLoadedImages] = useState<{ [key: string]: boolean }>({});
-
-  const handleImageLoad = (title: string) => {
-    setLoadedImages(prev => ({ ...prev, [title]: true }));
-  };
-
   return (
     <section id="servicos" className="py-24 bg-salon-dark relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -163,8 +139,6 @@ export default function Services() {
               key={service.title} 
               service={service} 
               index={index} 
-              loadedImages={loadedImages} 
-              handleImageLoad={handleImageLoad} 
             />
           ))}
         </div>

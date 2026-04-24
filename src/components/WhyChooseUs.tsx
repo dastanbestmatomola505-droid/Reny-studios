@@ -3,7 +3,6 @@ import React, { useState, useRef } from 'react';
 
 export default function WhyChooseUs() {
   const containerRef = useRef(null);
-  const [isSimulationLoaded, setIsSimulationLoaded] = useState(false);
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -145,12 +144,6 @@ Gostaria de confirmar a disponibilidade para esta semana. Como podemos agendar?`
                   {/* Simulation Visualization */}
                   <div className="flex flex-col gap-4 mb-4 md:mb-0">
                     <div className="relative h-48 md:h-full rounded-lg overflow-hidden border border-white/5">
-                      {!isSimulationLoaded && (
-                        <div className="absolute inset-0 bg-white/5 animate-pulse flex items-center justify-center z-10">
-                          <div className="w-8 h-8 border-2 border-salon-pink/20 border-t-salon-pink rounded-full animate-spin"></div>
-                        </div>
-                      )}
-                      
                       <motion.div
                         style={{ scale: scrollScale }}
                         className="w-full h-full"
@@ -166,11 +159,9 @@ Gostaria de confirmar a disponibilidade para esta semana. Como podemos agendar?`
                           }}
                           src="https://i.im.ge/eGsJ68/486181522_1184712499870875_6587990917239296048_n.jpg" 
                           alt="Simulação Visual" 
-                          className="w-full h-full object-cover object-[center_30%]"
+                          className="w-full h-full object-cover object-[center_30%] transform hover:scale-125 transition-transform duration-700"
                           loading="lazy"
                           decoding="async"
-                          onLoad={() => setIsSimulationLoaded(true)}
-                          style={{ opacity: isSimulationLoaded ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}
                         />
                       </motion.div>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">

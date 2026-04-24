@@ -3,7 +3,6 @@ import { Eye, Sparkles } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 export default function Simulation() {
-  const [isLoaded, setIsLoaded] = useState(false);
   const containerRef = useRef(null);
   
   const { scrollYProgress } = useScroll({
@@ -24,12 +23,6 @@ export default function Simulation() {
             viewport={{ once: true }}
             className="relative h-[400px] md:h-[600px] rounded-[3rem] overflow-hidden group shadow-3xl border border-white/10"
           >
-            {!isLoaded && (
-              <div className="absolute inset-0 bg-white/5 animate-pulse flex items-center justify-center z-10">
-                <div className="w-12 h-12 border-4 border-salon-pink/20 border-t-salon-pink rounded-full animate-spin"></div>
-              </div>
-            )}
-            
             <motion.div
               style={{ scale: scrollScale }}
               animate={{ y: [0, -15, 0] }}
@@ -41,12 +34,10 @@ export default function Simulation() {
               <img 
                 src="https://i.im.ge/eGsJ68/486181522_1184712499870875_6587990917239296048_n.jpg"
                 alt="Simulação Maquiagem Noiva"
-                className="w-full h-full object-cover object-[center_30%] transform group-hover:scale-110 transition-transform duration-700"
+                className="w-full h-full object-cover object-[center_30%] transform group-hover:scale-125 transition-transform duration-700"
                 referrerPolicy="no-referrer"
                 loading="lazy"
                 decoding="async"
-                onLoad={() => setIsLoaded(true)}
-                style={{ opacity: isLoaded ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}
               />
             </motion.div>
             

@@ -1,6 +1,6 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { X } from 'lucide-react';
-import { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 const images = [
   {
@@ -110,14 +110,63 @@ const images = [
   }
 ];
 
+const GalleryItem: React.FC<{ img: typeof images[0], index: number, onSelect: (img: typeof images[0]) => void }> = ({ img, index, onSelect }) => {
+  const itemRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: itemRef,
+    offset: ["start end", "end start"]
+  });
+
+  const scrollScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.15, 1]);
+  const scrollOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.6, 1, 1, 0.6]);
+
+  return (
+    <motion.div
+      ref={itemRef}
+      style={{ opacity: scrollOpacity }}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ 
+        duration: 0.8, 
+        delay: (index % 3) * 0.1,
+        ease: [0.22, 1, 0.36, 1]
+      }}
+      viewport={{ once: true, margin: "-50px" }}
+      onClick={() => onSelect(img)}
+      className="relative group h-48 sm:h-64 md:h-80 rounded-xl overflow-hidden cursor-pointer shadow-lg hover:shadow-salon-pink/20 transition-all bg-white/5"
+    >
+      <motion.div
+        style={{ scale: scrollScale }}
+        animate={{ y: [0, -5, 0] }}
+        transition={{ 
+          duration: 6, 
+          repeat: Infinity, 
+          ease: "easeInOut",
+          delay: index * 0.2
+        }}
+        className="w-full h-full"
+      >
+        <img
+          src={img.url}
+          alt={img.title}
+          className="w-full h-full object-cover transform group-hover:scale-125 transition-transform duration-700"
+          referrerPolicy="no-referrer"
+          loading="lazy"
+          decoding="async"
+        />
+      </motion.div>
+      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-center">
+        <span className="text-salon-gold text-[8px] md:text-[10px] font-bold tracking-[0.3em] uppercase mb-1">
+          {img.category}
+        </span>
+        <h4 className="text-white font-playfair text-sm md:text-xl font-bold">{img.title}</h4>
+      </div>
+    </motion.div>
+  );
+};
+
 export default function Gallery() {
   const [selectedImage, setSelectedImage] = useState<null | typeof images[0]>(null);
-
-  const [loadedImages, setLoadedImages] = useState<{ [key: number]: boolean }>({});
-
-  const handleImageLoad = (index: number) => {
-    setLoadedImages(prev => ({ ...prev, [index]: true }));
-  };
 
   return (
     <section id="galeria" className="py-24 bg-salon-dark">
@@ -140,59 +189,12 @@ export default function Gallery() {
 
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
           {images.map((img, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 50, scale: 0.9 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ 
-                duration: 0.8, 
-                delay: (index % 3) * 0.1,
-                ease: [0.22, 1, 0.36, 1]
-              }}
-              viewport={{ once: true, margin: "-100px" }}
-              onClick={() => setSelectedImage(img)}
-              className="relative group h-48 sm:h-64 md:h-80 rounded-xl overflow-hidden cursor-pointer shadow-lg hover:shadow-salon-pink/20 transition-all bg-white/5"
-            >
-              <AnimatePresence>
-                {!loadedImages[index] && (
-                  <motion.div 
-                    initial={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute inset-0 bg-white/5 animate-pulse flex items-center justify-center z-10"
-                  >
-                    <div className="w-8 h-8 border-2 border-salon-pink/20 border-t-salon-pink rounded-full animate-spin"></div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <motion.img
-                animate={{ 
-                  y: [0, -5, 0],
-                  opacity: loadedImages[index] ? 1 : 0 
-                }}
-                transition={{ 
-                  duration: 6, 
-                  repeat: Infinity, 
-                  ease: "easeInOut",
-                  delay: index * 0.2
-                }}
-                src={img.url}
-                alt={img.title}
-                className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                referrerPolicy="no-referrer"
-                loading="lazy"
-                decoding="async"
-                onLoad={() => handleImageLoad(index)}
-                initial={{ opacity: 0 }}
-                style={{ transition: 'opacity 0.5s ease-in-out' }}
-              />
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-center">
-                <span className="text-salon-gold text-[8px] md:text-[10px] font-bold tracking-[0.3em] uppercase mb-1">
-                  {img.category}
-                </span>
-                <h4 className="text-white font-playfair text-sm md:text-xl font-bold">{img.title}</h4>
-              </div>
-            </motion.div>
+            <GalleryItem 
+              key={index} 
+              img={img} 
+              index={index} 
+              onSelect={setSelectedImage} 
+            />
           ))}
         </div>
       </div>
