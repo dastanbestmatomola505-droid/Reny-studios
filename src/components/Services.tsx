@@ -88,7 +88,14 @@ export default function Services() {
               className="bg-salon-card border border-white/5 group hover:border-salon-gold/50 transition-all duration-500 rounded-[2.5rem] overflow-hidden flex flex-col shadow-2xl"
             >
               <div className="relative h-64 overflow-hidden">
-                <img
+                <motion.img
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ 
+                    duration: 4, 
+                    repeat: Infinity, 
+                    ease: "easeInOut",
+                    delay: index * 0.5 
+                  }}
                   src={service.image}
                   alt={service.title}
                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"

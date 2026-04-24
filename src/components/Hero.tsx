@@ -50,10 +50,13 @@ export default function Hero() {
                 <motion.span
                   key={`reny-${index}`}
                   variants={{
-                    hidden: { opacity: 0, scale: 0.5 },
-                    visible: { opacity: 1, scale: 1 }
+                    hidden: { opacity: 0, y: 20, rotateX: -90 },
+                    visible: { opacity: 1, y: 0, rotateX: 0 }
                   }}
-                  transition={{ duration: 0.1 }}
+                  transition={{ 
+                    duration: 0.4, 
+                    ease: [0.22, 1, 0.36, 1] 
+                  }}
                 >
                   {char}
                 </motion.span>
@@ -65,10 +68,13 @@ export default function Hero() {
                 <motion.span
                   key={`studios-${index}`}
                   variants={{
-                    hidden: { opacity: 0, scale: 0.5 },
-                    visible: { opacity: 1, scale: 1 }
+                    hidden: { opacity: 0, y: 20, rotateX: -90 },
+                    visible: { opacity: 1, y: 0, rotateX: 0 }
                   }}
-                  transition={{ duration: 0.1 }}
+                  transition={{ 
+                    duration: 0.4, 
+                    ease: [0.22, 1, 0.36, 1] 
+                  }}
                 >
                   {char}
                 </motion.span>

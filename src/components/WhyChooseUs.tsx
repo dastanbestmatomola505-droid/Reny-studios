@@ -136,9 +136,15 @@ Gostaria de confirmar a disponibilidade para esta semana. Como podemos agendar?`
                   <div className="flex flex-col gap-4 mb-4 md:mb-0">
                     <div className="relative h-48 md:h-full rounded-lg overflow-hidden border border-white/5">
                       <motion.img 
-                        initial={{ scale: 1.1 }}
-                        whileInView={{ scale: 1.5 }}
-                        transition={{ duration: 10, repeat: Infinity, repeatType: "reverse" }}
+                        animate={{ 
+                          scale: [1.1, 1.3, 1.1],
+                          y: [0, -10, 0]
+                        }}
+                        transition={{ 
+                          duration: 10, 
+                          repeat: Infinity, 
+                          ease: "easeInOut"
+                        }}
                         src="https://i.im.ge/eGsJ68/486181522_1184712499870875_6587990917239296048_n.jpg" 
                         alt="Simulação Visual" 
                         className="w-full h-full object-cover object-[center_30%]"

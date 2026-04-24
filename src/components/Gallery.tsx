@@ -136,21 +136,27 @@ export default function Gallery() {
           {images.map((img, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 30, scale: 0.9 }}
+              initial={{ opacity: 0, y: 50, scale: 0.9 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ 
-                duration: 0.6, 
+                duration: 0.8, 
                 delay: (index % 3) * 0.1,
-                ease: "easeOut"
+                ease: [0.22, 1, 0.36, 1]
               }}
-              viewport={{ once: true, margin: "-50px" }}
+              viewport={{ once: true, margin: "-100px" }}
               onClick={() => setSelectedImage(img)}
               className="relative group h-48 sm:h-64 md:h-80 rounded-xl overflow-hidden cursor-pointer shadow-lg hover:shadow-salon-pink/20 transition-all bg-white/5"
             >
               <motion.img
+                animate={{ y: [0, -5, 0] }}
+                transition={{ 
+                  duration: 6, 
+                  repeat: Infinity, 
+                  ease: "easeInOut",
+                  delay: index * 0.2
+                }}
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
-                transition={{ duration: 1 }}
                 src={img.url}
                 alt={img.title}
                 className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
