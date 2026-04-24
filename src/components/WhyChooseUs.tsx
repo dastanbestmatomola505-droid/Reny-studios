@@ -105,7 +105,13 @@ Gostaria de confirmar a disponibilidade para esta semana. Como podemos agendar?`
               <div className="bg-salon-card p-8 md:p-12 rounded-[3rem] border border-white/10 relative shadow-3xl overflow-hidden">
                 {/* Simulation Image Background Accent */}
                 <div className="absolute top-0 right-0 w-32 h-32 opacity-10 pointer-events-none">
-                  <img src="https://i.im.ge/eGsJ68/486181522_1184712499870875_6587990917239296048_n.jpg" alt="Simulation background" className="w-full h-full object-cover rounded-bl-full" />
+                  <img 
+                    src="https://i.im.ge/eGsJ68/486181522_1184712499870875_6587990917239296048_n.jpg" 
+                    alt="Simulation background" 
+                    className="w-full h-full object-cover rounded-bl-full" 
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </div>
 
                 <div className="text-center mb-8">
@@ -136,6 +142,8 @@ Gostaria de confirmar a disponibilidade para esta semana. Como podemos agendar?`
                         src="https://i.im.ge/eGsJ68/486181522_1184712499870875_6587990917239296048_n.jpg" 
                         alt="Simulação Visual" 
                         className="w-full h-full object-cover object-[center_30%]"
+                        loading="lazy"
+                        decoding="async"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
                         <span className="text-[10px] font-bold text-salon-gold uppercase tracking-[0.2em]">Visualização Premium</span>

@@ -8,15 +8,17 @@ export default function Hero() {
         <img
           src="https://i.im.ge/eGs1GF/ChatGPT_Image_22_de_abr._de_2026_14_25_39.png"
           alt="Reny Studios Background"
-          className="w-full h-full object-cover object-center"
+          className="w-full h-full object-cover object-[85%_center] md:object-[90%_center] scale-110"
           referrerPolicy="no-referrer"
+          fetchPriority="high"
+          decoding="sync"
         />
         {/* Dark Overlays for Text Readability */}
-        <div className="absolute inset-0 bg-black/60 z-10"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-salon-dark via-transparent to-black/40 z-10"></div>
+        <div className="absolute inset-0 bg-black/50 z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-salon-dark via-salon-dark/40 to-transparent z-10"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-20 text-center mt-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-20 text-left md:text-center mt-20">
         <motion.div
           initial="hidden"
           animate="visible"
@@ -25,30 +27,53 @@ export default function Hero() {
             visible: {
               opacity: 1,
               transition: {
-                staggerChildren: 0.3
+                staggerChildren: 0.1
               }
             }
           }}
         >
           <motion.span 
             variants={{
-              hidden: { opacity: 0, scale: 0.8 },
-              visible: { opacity: 1, scale: 1 }
+              hidden: { opacity: 0, x: -20 },
+              visible: { opacity: 1, x: 0 }
             }}
-            className="text-salon-gold text-sm font-black uppercase mb-8 block drop-shadow-[0_0_15px_rgba(212,175,55,0.5)] bg-black/20 backdrop-blur-sm inline-block px-6 py-2 rounded-full border border-salon-gold/30 tracking-[0.5em]"
+            className="text-salon-gold text-[10px] md:text-sm font-black uppercase mb-8 block drop-shadow-[0_0_15px_rgba(212,175,55,0.5)] bg-black/20 backdrop-blur-sm inline-block px-4 md:px-6 py-2 rounded-full border border-salon-gold/30 tracking-[0.5em]"
           >
             Bem-vinda ao Luxo
           </motion.span>
           
           <motion.h1 
-            variants={{
-              hidden: { opacity: 0, y: 50 },
-              visible: { opacity: 1, y: 0 }
-            }}
-            className="text-6xl md:text-8xl lg:text-9xl font-playfair font-bold leading-tight mb-8 text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]"
+            className="text-6xl md:text-8xl lg:text-[10rem] font-playfair font-bold leading-[0.8] mb-8 text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)] flex flex-wrap md:justify-center items-center"
           >
-            Reny <br />
-            <span className="text-salon-pink italic">Studios</span>
+            <div className="flex">
+              {"Reny".split("").map((char, index) => (
+                <motion.span
+                  key={`reny-${index}`}
+                  variants={{
+                    hidden: { opacity: 0, scale: 0.5 },
+                    visible: { opacity: 1, scale: 1 }
+                  }}
+                  transition={{ duration: 0.1 }}
+                >
+                  {char}
+                </motion.span>
+              ))}
+            </div>
+            <span className="mx-4 md:mx-8"></span>
+            <div className="flex text-salon-pink italic">
+              {"Studios".split("").map((char, index) => (
+                <motion.span
+                  key={`studios-${index}`}
+                  variants={{
+                    hidden: { opacity: 0, scale: 0.5 },
+                    visible: { opacity: 1, scale: 1 }
+                  }}
+                  transition={{ duration: 0.1 }}
+                >
+                  {char}
+                </motion.span>
+              ))}
+            </div>
           </motion.h1>
           
           <motion.p 

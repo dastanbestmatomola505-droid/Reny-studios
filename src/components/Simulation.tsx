@@ -16,8 +16,10 @@ export default function Simulation() {
             <img 
               src="https://i.im.ge/eGsJ68/486181522_1184712499870875_6587990917239296048_n.jpg"
               alt="Simulação Maquiagem Noiva"
-              className="w-full h-full object-cover object-[center_30%] scale-125 transform group-hover:scale-135 transition-transform duration-1000"
+              className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000"
               referrerPolicy="no-referrer"
+              loading="lazy"
+              decoding="async"
             />
             {/* Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-salon-dark via-transparent to-transparent opacity-60"></div>
@@ -33,6 +35,7 @@ export default function Simulation() {
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
             className="space-y-8"
           >
             <div className="flex items-center gap-4 text-salon-gold">

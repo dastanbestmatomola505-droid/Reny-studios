@@ -136,18 +136,32 @@ export default function Gallery() {
           {images.map((img, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1 }}
-              viewport={{ once: true }}
+              initial={{ opacity: 0, y: 30, scale: 0.9 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ 
+                duration: 0.6, 
+                delay: (index % 3) * 0.1,
+                ease: "easeOut"
+              }}
+              viewport={{ once: true, margin: "-50px" }}
               onClick={() => setSelectedImage(img)}
-              className="relative group h-48 sm:h-64 md:h-80 rounded-xl overflow-hidden cursor-pointer shadow-lg hover:shadow-salon-pink/20 transition-all"
+              className="relative group h-48 sm:h-64 md:h-80 rounded-xl overflow-hidden cursor-pointer shadow-lg hover:shadow-salon-pink/20 transition-all bg-white/5"
             >
-              <img
+              <motion.img
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 1 }}
                 src={img.url}
                 alt={img.title}
                 className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                 referrerPolicy="no-referrer"
+                loading="lazy"
+                decoding="async"
+                onLoad={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.opacity = '1';
+                }}
+                style={{ opacity: 0, transition: 'opacity 1s ease-in-out' }}
               />
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-center">
                 <span className="text-salon-gold text-[8px] md:text-[10px] font-bold tracking-[0.3em] uppercase mb-1">
@@ -189,6 +203,7 @@ export default function Gallery() {
                 alt={selectedImage.title}
                 className="w-full h-full object-contain rounded-lg shadow-2xl shadow-salon-pink/10"
                 referrerPolicy="no-referrer"
+                decoding="async"
               />
               
               <div className="mt-6 text-center">

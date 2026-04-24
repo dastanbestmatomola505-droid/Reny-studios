@@ -27,7 +27,13 @@ Gostaria de saber sobre as próximas turmas, o material incluído e as facilidad
   return (
     <section id="cursos" className="py-24 bg-salon-dark relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-salon-card rounded-[3.5rem] border border-white/5 overflow-hidden shadow-2xl relative">
+        <motion.div 
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="bg-salon-card rounded-[3.5rem] border border-white/5 overflow-hidden shadow-2xl relative"
+        >
           <div className="grid lg:grid-cols-2">
             {/* Image Section */}
             <div className="relative h-96 lg:h-auto overflow-hidden">
@@ -148,7 +154,7 @@ Gostaria de saber sobre as próximas turmas, o material incluído e as facilidad
           
           {/* Accent element */}
           <div className="absolute top-0 right-0 w-24 h-24 border-t-2 border-r-2 border-salon-gold/20 rounded-tr-3xl pointer-events-none"></div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

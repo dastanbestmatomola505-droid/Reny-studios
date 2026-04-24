@@ -3,14 +3,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { Suspense, lazy } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import Services from './components/Services';
-import Simulation from './components/Simulation';
-import Courses from './components/Courses';
-import Gallery from './components/Gallery';
-import WhyChooseUs from './components/WhyChooseUs';
-import Footer from './components/Footer';
+
+const Services = lazy(() => import('./components/Services'));
+const Simulation = lazy(() => import('./components/Simulation'));
+const Courses = lazy(() => import('./components/Courses'));
+const Gallery = lazy(() => import('./components/Gallery'));
+const WhyChooseUs = lazy(() => import('./components/WhyChooseUs'));
+const Footer = lazy(() => import('./components/Footer'));
+
+const SectionLoader = () => (
+  <div className="py-24 bg-salon-dark flex items-center justify-center">
+    <div className="w-10 h-10 border-4 border-salon-pink border-t-transparent rounded-full animate-spin"></div>
+  </div>
+);
 
 export default function App() {
   return (
@@ -18,13 +26,15 @@ export default function App() {
       <Navbar />
       <main>
         <Hero />
-        <Services />
-        <Simulation />
-        <Courses />
-        <Gallery />
-        <WhyChooseUs />
+        <Suspense fallback={<SectionLoader />}>
+          <Services />
+          <Simulation />
+          <Courses />
+          <Gallery />
+          <WhyChooseUs />
+          <Footer />
+        </Suspense>
       </main>
-      <Footer />
     </div>
   );
 }
